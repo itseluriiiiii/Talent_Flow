@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,8 +15,9 @@ import {
   User,
   CheckCircle,
   XCircle,
+  Loader2,
 } from 'lucide-react';
-import { interviews } from '@/data/mockData';
+import { api } from '@/lib/api';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -41,6 +43,11 @@ const statusColors: Record<string, string> = {
 
 export default function Interviews() {
   const [tab, setTab] = useState('upcoming');
+
+  const { data: interviews = [], isLoading, error } = useQuery({
+    queryKey: ['interviews'],
+    queryFn: () => api.getInterviews(),
+  });
 
   const scheduledInterviews = interviews.filter((i) => i.status === 'scheduled');
   const completedInterviews = interviews.filter((i) => i.status === 'completed');
@@ -75,8 +82,17 @@ export default function Interviews() {
         </TabsList>
 
         <TabsContent value="upcoming" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            {scheduledInterviews.map((interview) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-destructive">
+              <p>Failed to load interviews. Please try again.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {scheduledInterviews.map((interview) => (
               <Card key={interview.id} className="overflow-hidden hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -120,13 +136,23 @@ export default function Interviews() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="completed" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            {completedInterviews.map((interview) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-destructive">
+              <p>Failed to load interviews. Please try again.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {completedInterviews.map((interview) => (
               <Card key={interview.id} className="overflow-hidden">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -184,8 +210,9 @@ export default function Interviews() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

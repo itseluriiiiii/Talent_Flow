@@ -35,7 +35,11 @@ const navigation = [
   { name: 'Analytics', href: '/analytics', icon: BarChart3, roles: ['hr', 'manager'] },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onToggle?: () => void;
+}
+
+export function Sidebar({ onToggle }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -44,21 +48,26 @@ export function Sidebar() {
     (item) => user && item.roles.includes(user.role)
   );
 
+  const handleToggle = () => {
+    setCollapsed(!collapsed);
+    onToggle?.();
+  };
+
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 h-screen bg-sidebar transition-all duration-300 flex flex-col',
+        'fixed left-0 top-0 z-40 h-screen bg-white/10 backdrop-blur-md transition-all duration-300 flex flex-col',
         collapsed ? 'w-16' : 'w-64'
       )}
     >
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-sidebar-border">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-white/20">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-sidebar-foreground">
+            <span className="font-display font-bold text-white">
               SmartHire
             </span>
           </div>
@@ -66,8 +75,8 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-sidebar-foreground hover:bg-sidebar-accent"
+          onClick={handleToggle}
+          className="text-white hover:bg-white/20"
         >
           <ChevronLeft
             className={cn(
@@ -87,10 +96,10 @@ export function Sidebar() {
               key={item.name}
               to={item.href}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-white',
                 isActive
-                  ? 'bg-sidebar-primary text-sidebar-primary-foreground'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  ? 'bg-white/30'
+                  : 'hover:bg-white/20'
               )}
             >
               <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -112,21 +121,21 @@ export function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="border-t border-sidebar-border p-4">
+      <div className="border-t border-white/20 p-4">
         {user && (
           <div className={cn('flex items-center gap-3', collapsed && 'justify-center')}>
             <Avatar className="h-9 w-9">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">
+              <AvatarFallback className="bg-white/30 text-white">
                 {user.name.split(' ').map((n) => n[0]).join('')}
               </AvatarFallback>
             </Avatar>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {user.name}
                 </p>
-                <p className="text-xs text-sidebar-foreground/60 capitalize">
+                <p className="text-xs text-white/70 capitalize">
                   {user.role}
                 </p>
               </div>

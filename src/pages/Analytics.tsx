@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   AreaChart,
@@ -14,8 +15,8 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { analyticsData } from '@/data/mockData';
-import { TrendingUp, TrendingDown, Users, Clock, Target, Percent } from 'lucide-react';
+import { api } from '@/lib/api';
+import { TrendingUp, TrendingDown, Users, Clock, Target, Percent, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const COLORS = [
@@ -28,6 +29,27 @@ const COLORS = [
 ];
 
 export default function Analytics() {
+  const { data: analyticsData, isLoading, error } = useQuery({
+    queryKey: ['analytics'],
+    queryFn: () => api.getAnalytics(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error || !analyticsData) {
+    return (
+      <div className="p-8 text-center text-destructive">
+        <p>Failed to load analytics. Please try again.</p>
+      </div>
+    );
+  }
+
   const deptData = analyticsData.departmentMetrics.map((d) => ({
     name: d.name,
     headcount: d.headcount,

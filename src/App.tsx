@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
-import Candidates from "./pages/Candidates";
+import HRDashboard from "./pages/HRDashboard";
+import CandidatesPage from "./pages/CandidatesPage";
 import Interviews from "./pages/Interviews";
 import Employees from "./pages/Employees";
 import Onboarding from "./pages/Onboarding";
@@ -38,7 +39,8 @@ function AppRoutes() {
         element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} 
       />
       <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/candidates" element={<ProtectedRoute><Candidates /></ProtectedRoute>} />
+      <Route path="/hr-dashboard" element={<ProtectedRoute><HRDashboard /></ProtectedRoute>} />
+      <Route path="/candidates" element={<ProtectedRoute><CandidatesPage /></ProtectedRoute>} />
       <Route path="/interviews" element={<ProtectedRoute><Interviews /></ProtectedRoute>} />
       <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
       <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />

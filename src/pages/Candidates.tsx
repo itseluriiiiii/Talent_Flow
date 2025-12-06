@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,8 +26,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Search, Plus, MoreHorizontal, Mail, Phone, FileText, Sparkles } from 'lucide-react';
-import { candidates } from '@/data/mockData';
+import { Search, Plus, MoreHorizontal, Mail, Phone, FileText, Sparkles, Loader2 } from 'lucide-react';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -42,6 +43,11 @@ const statusColors: Record<string, string> = {
 export default function Candidates() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  const { data: candidates = [], isLoading, error } = useQuery({
+    queryKey: ['candidates'],
+    queryFn: () => api.getCandidates(),
+  });
 
   const filteredCandidates = candidates.filter((candidate) => {
     const matchesSearch =
@@ -101,19 +107,28 @@ export default function Candidates() {
       {/* Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Candidate</TableHead>
-                <TableHead>Position</TableHead>
-                <TableHead>AI Score</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Applied</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCandidates.map((candidate) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-destructive">
+              <p>Failed to load candidates. Please try again.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Candidate</TableHead>
+                  <TableHead>Position</TableHead>
+                  <TableHead>AI Score</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Applied</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCandidates.map((candidate) => (
                 <TableRow key={candidate.id} className="hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -184,9 +199,10 @@ export default function Candidates() {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

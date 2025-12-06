@@ -1,17 +1,30 @@
-import { Users, UserPlus, Briefcase, Clock } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Users, UserPlus, Briefcase, Clock, Loader2 } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { RecentCandidates } from '@/components/dashboard/RecentCandidates';
 import { UpcomingInterviews } from '@/components/dashboard/UpcomingInterviews';
 import { HiringChart } from '@/components/dashboard/HiringChart';
 import { DepartmentMetrics } from '@/components/dashboard/DepartmentMetrics';
-import { analyticsData } from '@/data/mockData';
+import { api } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { data: analyticsData, isLoading } = useQuery({
+    queryKey: ['analytics'],
+    queryFn: () => api.getAnalytics(),
+  });
+
+  if (isLoading || !analyticsData) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in relative z-10">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">

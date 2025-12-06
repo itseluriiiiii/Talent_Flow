@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,14 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search, Plus, Mail, Phone, MoreHorizontal, Building2 } from 'lucide-react';
+import { Search, Plus, Mail, Phone, MoreHorizontal, Building2, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { employees } from '@/data/mockData';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 const statusColors: Record<string, string> = {
@@ -31,6 +32,11 @@ const statusColors: Record<string, string> = {
 export default function Employees() {
   const [search, setSearch] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState<string>('all');
+
+  const { data: employees = [], isLoading, error } = useQuery({
+    queryKey: ['employees'],
+    queryFn: () => api.getEmployees(),
+  });
 
   const departments = [...new Set(employees.map((e) => e.department))];
 
@@ -90,8 +96,17 @@ export default function Employees() {
       </Card>
 
       {/* Employee Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredEmployees.map((employee) => (
+      {isLoading ? (
+        <div className="flex items-center justify-center p-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : error ? (
+        <div className="p-8 text-center text-destructive">
+          <p>Failed to load employees. Please try again.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredEmployees.map((employee) => (
           <Card key={employee.id} className="overflow-hidden hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -165,8 +180,9 @@ export default function Employees() {
               )}
             </CardContent>
           </Card>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

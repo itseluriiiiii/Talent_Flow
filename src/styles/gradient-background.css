@@ -1,0 +1,66 @@
+/* Animated Gradient Background */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    #fbfbfb 0%,
+    #cdc1ff 50%,
+    #a294f9 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease-in-out infinite;
+  z-index: -1;
+}
+
+.gradient-background-alt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    -45deg,
+    #fbfbfb,
+    #cdc1ff,
+    #a294f9,
+    #fbfbfb
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+/* Text color for contrast */
+body {
+  color: #1b1833 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #1b1833 !important;
+}
+
+p, span, a {
+  color: #1b1833 !important;
+}
+
+/* Optional: Add a subtle overlay for better text contrast if needed */
+.gradient-overlay {
+  position: relative;
+  z-index: 1;
+}

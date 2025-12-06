@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,8 +29,9 @@ import {
   Download,
   Trash2,
   Eye,
+  Loader2,
 } from 'lucide-react';
-import { documents } from '@/data/mockData';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -57,6 +59,11 @@ function formatFileSize(bytes: number): string {
 
 export default function Documents() {
   const [search, setSearch] = useState('');
+
+  const { data: documents = [], isLoading, error } = useQuery({
+    queryKey: ['documents'],
+    queryFn: () => api.getDocuments(),
+  });
 
   const filteredDocuments = documents.filter((doc) =>
     doc.name.toLowerCase().includes(search.toLowerCase())
@@ -96,19 +103,28 @@ export default function Documents() {
       {/* Documents Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Document</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Uploaded By</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredDocuments.map((doc) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : error ? (
+            <div className="p-8 text-center text-destructive">
+              <p>Failed to load documents. Please try again.</p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Document</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Uploaded By</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead className="w-[50px]"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredDocuments.map((doc) => (
                 <TableRow key={doc.id} className="hover:bg-muted/50">
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -154,9 +170,10 @@ export default function Documents() {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>

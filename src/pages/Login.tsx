@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Eye, EyeOff } from 'lucide-react';
+import GradientBackground from '@/components/GradientBackground';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -41,7 +42,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <>
+      <GradientBackground />
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/20 rounded-full blur-3xl" />
@@ -105,6 +108,7 @@ export default function Login() {
           </p>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

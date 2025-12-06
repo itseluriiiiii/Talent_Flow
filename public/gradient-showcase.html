@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animated Gradient Background</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Animated Gradient Background */
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, sans-serif;
+      color: #1b1833;
+      background: linear-gradient(135deg, #fbfbfb 0%, #cdc1ff 50%, #a294f9 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease-in-out infinite;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      space-y: 32px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1b1833;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: rgba(27, 24, 51, 0.8);
+      line-height: 1.6;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(27, 24, 51, 0.1);
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1b1833;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: rgba(27, 24, 51, 0.7);
+      line-height: 1.6;
+    }
+
+    .palette-section {
+      margin-bottom: 48px;
+    }
+
+    .palette-section h2 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #1b1833;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .color-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-swatch {
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      border: 2px solid rgba(27, 24, 51, 0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.05);
+    }
+
+    .color-code {
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      color: #1b1833;
+      font-weight: 600;
+    }
+
+    .color-1 {
+      background-color: #fbfbfb;
+    }
+
+    .color-2 {
+      background-color: #cdc1ff;
+    }
+
+    .color-3 {
+      background-color: #a294f9;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: #1b1833;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: rgba(27, 24, 51, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(27, 24, 51, 0.2);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #1b1833;
+      border: 2px solid #1b1833;
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(27, 24, 51, 0.05);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 36px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .palette-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Animated Gradient Background</h1>
+      <p class="subtitle">
+        A smooth, modern gradient that softly blends between colors in a continuous loop
+      </p>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="cards-grid">
+      <div class="card">
+        <h3>Smooth Animation</h3>
+        <p>15-second animation cycle with ease-in-out timing for a natural feel</p>
+      </div>
+
+      <div class="card">
+        <h3>No Flickering</h3>
+        <p>Carefully tuned gradient positions prevent harsh transitions</p>
+      </div>
+
+      <div class="card">
+        <h3>Modern Colors</h3>
+        <p>Aesthetic palette: #FBFBFB, #CDC1FF, #A294F9</p>
+      </div>
+
+      <div class="card">
+        <h3>Full Screen</h3>
+        <p>Fixed positioning ensures the gradient covers the entire viewport</p>
+      </div>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="palette-section">
+      <h2>Color Palette</h2>
+      <div class="palette-grid">
+        <div class="color-box">
+          <div class="color-swatch color-1"></div>
+          <span class="color-code">#FBFBFB</span>
+        </div>
+        <div class="color-box">
+          <div class="color-swatch color-2"></div>
+          <span class="color-code">#CDC1FF</span>
+        </div>
+        <div class="color-box">
+          <div class="color-swatch color-3"></div>
+          <span class="color-code">#A294F9</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="cta-buttons">
+      <button class="btn-primary">Get Started</button>
+      <button class="btn-secondary">Learn More</button>
+    </div>
+  </div>
+</body>
+</html>

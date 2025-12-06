@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +14,9 @@ import {
   Calendar,
   Plus,
   UserMinus,
+  Loader2,
 } from 'lucide-react';
-import { employees, offboardingTasks } from '@/data/mockData';
+import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -40,6 +42,18 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Offboarding() {
+  const { data: employees = [], isLoading: employeesLoading } = useQuery({
+    queryKey: ['employees'],
+    queryFn: () => api.getEmployees(),
+  });
+
+  const { data: offboardingTasks = [], isLoading: tasksLoading } = useQuery({
+    queryKey: ['offboarding'],
+    queryFn: () => api.getOffboardingTasks(),
+  });
+
+  const isLoading = employeesLoading || tasksLoading;
+
   const offboardingEmployees = employees.filter((e) => e.status === 'offboarding');
 
   const getEmployeeTasks = (employeeId: string) =>
@@ -50,6 +64,14 @@ export default function Offboarding() {
     const completed = tasks.filter((t) => t.status === 'completed').length;
     return tasks.length > 0 ? (completed / tasks.length) * 100 : 0;
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
