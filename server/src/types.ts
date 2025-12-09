@@ -92,6 +92,7 @@ export interface Document {
   uploadedAt: string;
   size: number;
   url: string;
+  filename?: string;
   employeeId?: string;
 }
 

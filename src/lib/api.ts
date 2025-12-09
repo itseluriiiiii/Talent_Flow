@@ -211,6 +211,66 @@ class ApiClient {
     return this.request(`/documents/${id}`, { method: 'DELETE' });
   }
 
+  async uploadDocument(file: File, type: string, name?: string) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    if (name) {
+      formData.append('name', name);
+    }
+
+    const headers: HeadersInit = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/documents/upload`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        let errorMessage = 'Upload failed';
+        try {
+          const error = await response.json();
+          errorMessage = error.error || error.message || errorMessage;
+        } catch (e) {
+          // Response is not JSON
+        }
+        throw new Error(errorMessage);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Upload Error:', error);
+      throw error;
+    }
+  }
+
+  async downloadDocument(id: string) {
+    const headers: HeadersInit = {};
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/documents/${id}/download`, {
+        headers,
+      });
+
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+
+      return response.blob();
+    } catch (error) {
+      console.error('Download Error:', error);
+      throw error;
+    }
+  }
+
   // Analytics
   async getAnalytics() {
     return this.request('/analytics');
