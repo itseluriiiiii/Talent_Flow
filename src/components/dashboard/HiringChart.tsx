@@ -4,7 +4,7 @@ import { analyticsData } from '@/data/mockData';
 
 export function HiringChart() {
   return (
-    <Card className="col-span-2">
+    <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">Hiring Trend</CardTitle>
       </CardHeader>

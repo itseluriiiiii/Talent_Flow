@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  signup: (email: string, password: string, role: UserRole, name: string) => Promise<boolean>;
   logout: () => void;
   switchRole: (role: UserRole) => void;
 }
@@ -43,6 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signup = async (email: string, password: string, role: UserRole, name: string): Promise<boolean> => {
+    try {
+      const response = await api.signup(email, password, role, name);
+      setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+      return true;
+    } catch (error) {
+      console.error('Signup failed:', error);
+      return false;
+    }
+  };
+
   const logout = async () => {
     try {
       await api.logout();
@@ -68,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated: !!user,
         login,
+        signup,
         logout,
         switchRole,
       }}

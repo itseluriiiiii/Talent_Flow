@@ -13,6 +13,15 @@ export const users: User[] = [
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
     department: 'Human Resources',
   },
+  {
+    id: '2',
+    email: 'arnav.eluri@company.com',
+    password: hashedPassword,
+    name: 'Arnav Eluri',
+    role: 'manager',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Arnav&gender=male',
+    department: 'Engineering',
+  },
 ];
 
 export const candidates: Candidate[] = [

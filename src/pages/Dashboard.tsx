@@ -36,7 +36,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Employees"
           value={analyticsData.totalEmployees}
@@ -68,13 +68,17 @@ export default function Dashboard() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <HiringChart />
-        <DepartmentMetrics />
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <HiringChart />
+        </div>
+        <div>
+          <DepartmentMetrics />
+        </div>
       </div>
 
       {/* Activity Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         <RecentCandidates />
         <UpcomingInterviews />
       </div>

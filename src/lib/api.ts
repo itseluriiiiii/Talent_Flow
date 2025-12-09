@@ -61,6 +61,15 @@ class ApiClient {
     return data;
   }
 
+  async signup(email: string, password: string, role: string, name: string) {
+    const data = await this.request('/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, role, name }),
+    });
+    this.setToken(data.token);
+    return data;
+  }
+
   async logout() {
     await this.request('/auth/logout', { method: 'POST' });
     this.clearToken();

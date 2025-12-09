@@ -246,7 +246,7 @@ export default function CandidatesPage() {
     },
   });
 
-  const handleAddCandidate = () => {
+  const handleAddCandidate = async () => {
     if (!formData.name || !formData.email || !formData.position) {
       toast({
         title: 'Error',
@@ -255,7 +255,12 @@ export default function CandidatesPage() {
       });
       return;
     }
-    createMutation.mutate(formData);
+    try {
+      await createMutation.mutateAsync(formData);
+      setFormData({});
+    } catch (error) {
+      console.error('Error adding candidate:', error);
+    }
   };
 
   const handleUpdateCandidate = () => {
@@ -432,8 +437,8 @@ export default function CandidatesPage() {
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 items-end">
+            <div className="relative flex-1 lg:flex-[2]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search candidates..."
@@ -452,7 +457,7 @@ export default function CandidatesPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px] lg:w-[200px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -472,7 +477,7 @@ export default function CandidatesPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px] lg:w-[200px]">
                 <SelectValue placeholder="Filter by department" />
               </SelectTrigger>
               <SelectContent>
@@ -491,7 +496,7 @@ export default function CandidatesPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-full sm:w-[150px]">
+              <SelectTrigger className="w-full sm:w-[150px] lg:w-[180px]">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -504,7 +509,7 @@ export default function CandidatesPage() {
             <Button
               variant="outline"
               onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto lg:w-auto"
             >
               {sortOrder === 'asc' ? '↑ Asc' : '↓ Desc'}
             </Button>

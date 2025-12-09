@@ -1,6 +1,8 @@
-import { Bell, Search, Settings, LogOut, Menu } from 'lucide-react';
+import { Search, Settings, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { TutorialWidget } from '@/components/TutorialWidget';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +22,7 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
   const { user, logout, switchRole } = useAuth();
+  const navigate = useNavigate();
 
   const roles: { value: UserRole; label: string }[] = [
     { value: 'hr', label: 'HR Manager' },
@@ -29,7 +32,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-white/20 bg-white/10 backdrop-blur supports-[backdrop-filter]:bg-white/10">
-      <div className="flex h-full items-center justify-between px-4 md:px-6 gap-4">
+      <div className="flex h-full items-center justify-between px-4 md:px-6 lg:px-8 gap-4 mx-auto max-w-7xl">
         {/* Mobile menu button */}
         <Button
           variant="ghost"
@@ -78,13 +81,8 @@ export function Header({ onMenuClick }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative text-[#1b1833] hover:bg-white/20 hidden sm:flex">
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground flex items-center justify-center">
-              3
-            </span>
-          </Button>
+          {/* Tutorial Widget */}
+          <TutorialWidget />
 
           {/* User menu */}
           <DropdownMenu>
@@ -106,7 +104,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
               </DropdownMenuItem>

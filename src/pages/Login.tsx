@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Eye, EyeOff } from 'lucide-react';
+import { Briefcase, Eye, EyeOff } from 'lucide-react';
 import GradientBackground from '@/components/GradientBackground';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -52,10 +52,10 @@ export default function Login() {
 
       <Card className="w-full max-w-md relative glass">
         <CardHeader className="text-center">
-          <div className="w-14 h-14 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4">
-            <Sparkles className="w-8 h-8 text-primary-foreground" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center mx-auto mb-4">
+            <Briefcase className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-display">Welcome to SmartHire</CardTitle>
+          <CardTitle className="text-2xl font-display">Welcome to TalentFlow</CardTitle>
           <CardDescription>
             Sign in to access your HR dashboard
           </CardDescription>
@@ -105,6 +105,12 @@ export default function Login() {
           </form>
           <p className="text-center text-sm text-muted-foreground mt-4">
             Demo credentials are pre-filled. Just click Sign In.
+          </p>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-primary hover:underline font-medium">
+              Sign Up
+            </Link>
           </p>
         </CardContent>
       </Card>

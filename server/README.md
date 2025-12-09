@@ -1,6 +1,6 @@
-# SmartHire Backend API
+# TalentFlow Backend API
 
-Backend server for the SmartHire HR Management System.
+Backend server for the TalentFlow HR Management System.
 
 ## Setup
 

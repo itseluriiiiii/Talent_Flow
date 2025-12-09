@@ -35,7 +35,7 @@ app.use('/api/dashboard', dashboardRoutes);
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'SmartHire API Server',
+    message: 'TalentFlow API Server',
     status: 'running',
     version: '1.0.0',
     endpoints: {
@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'SmartHire API is running' });
+  res.json({ status: 'ok', message: 'TalentFlow API is running' });
 });
 
 app.listen(PORT, () => {
