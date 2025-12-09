@@ -211,7 +211,7 @@ export default function HRDashboard() {
       </div>
 
       {/* Key Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Employees"
           value={dashboardData.totalEmployees}
@@ -243,7 +243,7 @@ export default function HRDashboard() {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Hiring Trend */}
         <Card>
           <CardHeader>
@@ -308,7 +308,7 @@ export default function HRDashboard() {
       </div>
 
       {/* Charts Row 2 */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Department Details */}
         <Card>
           <CardHeader>
@@ -362,7 +362,7 @@ export default function HRDashboard() {
       </div>
 
       {/* Tables Row */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         {/* Recent Candidates */}
         <Card>
           <CardHeader>

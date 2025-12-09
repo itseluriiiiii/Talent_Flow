@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,9 +31,26 @@ import {
   Eye,
   Loader2,
 } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 const typeIcons: Record<string, React.ReactNode> = {
   resume: <FileText className="h-5 w-5" />,
@@ -59,11 +76,76 @@ function formatFileSize(bytes: number): string {
 
 export default function Documents() {
   const [search, setSearch] = useState('');
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: documents = [], isLoading, error } = useQuery({
     queryKey: ['documents'],
     queryFn: () => api.getDocuments(),
   });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => api.createDocument(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      setIsUploadDialogOpen(false);
+      setFormData({});
+      toast({
+        title: 'Success',
+        description: 'Document uploaded successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to upload document',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.deleteDocument(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      toast({
+        title: 'Success',
+        description: 'Document deleted successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to delete document',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleUploadDocument = () => {
+    if (!formData.name || !formData.type) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+    createMutation.mutate({
+      ...formData,
+      uploadedBy: 'Current User',
+      size: Math.floor(Math.random() * 5000000),
+      url: '#',
+    });
+  };
+
+  const handleDeleteDocument = (id: string) => {
+    if (confirm('Are you sure you want to delete this document?')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   const filteredDocuments = documents.filter((doc) =>
     doc.name.toLowerCase().includes(search.toLowerCase())
@@ -79,10 +161,75 @@ export default function Documents() {
             Manage HR documents, policies, and employee files
           </p>
         </div>
-        <Button className="gap-2">
-          <Upload className="h-4 w-4" />
-          Upload Document
-        </Button>
+        <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Upload className="h-4 w-4" />
+              Upload Document
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Upload Document</DialogTitle>
+              <DialogDescription>
+                Fill in the document details below
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="docName">Document Name *</Label>
+                <Input
+                  id="docName"
+                  value={formData.name || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  placeholder="Document name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="docType">Document Type *</Label>
+                <Select
+                  value={formData.type || ''}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, type: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="resume">Resume</SelectItem>
+                    <SelectItem value="contract">Contract</SelectItem>
+                    <SelectItem value="policy">Policy</SelectItem>
+                    <SelectItem value="certificate">Certificate</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="docFile">File</Label>
+                <Input
+                  id="docFile"
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setFormData({ ...formData, fileName: file.name })
+                    }
+                  }}
+                />
+              </div>
+              <Button
+                onClick={handleUploadDocument}
+                disabled={createMutation.isPending}
+                className="w-full"
+              >
+                {createMutation.isPending ? 'Uploading...' : 'Upload Document'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Search */}
@@ -162,7 +309,10 @@ export default function Documents() {
                           <Download className="mr-2 h-4 w-4" />
                           Download
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => handleDeleteDocument(doc.id)}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" />
                           Delete
                         </DropdownMenuItem>

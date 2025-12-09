@@ -1,10 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   FileText,
   GraduationCap,
@@ -15,9 +18,25 @@ import {
   Plus,
   Loader2,
 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   documentation: <FileText className="h-4 w-4" />,
@@ -42,6 +61,11 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Onboarding() {
+  const [isStartDialogOpen, setIsStartDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const { data: employees = [], isLoading: employeesLoading } = useQuery({
     queryKey: ['employees'],
     queryFn: () => api.getEmployees(),
@@ -51,6 +75,67 @@ export default function Onboarding() {
     queryKey: ['onboarding'],
     queryFn: () => api.getOnboardingTasks(),
   });
+
+  const createTaskMutation = useMutation({
+    mutationFn: (data: any) => api.createOnboardingTask(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['onboarding'] });
+      setIsStartDialogOpen(false);
+      setFormData({});
+      toast({
+        title: 'Success',
+        description: 'Onboarding started successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to start onboarding',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, data }: any) => api.updateOnboardingTask(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['onboarding'] });
+      toast({
+        title: 'Success',
+        description: 'Task updated successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to update task',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleStartOnboarding = () => {
+    if (!formData.employeeId || !formData.title) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+    createTaskMutation.mutate({
+      ...formData,
+      status: 'pending',
+      dueDate: formData.dueDate || new Date().toISOString().split('T')[0],
+    });
+  };
+
+  const handleUpdateTaskStatus = (taskId: string, newStatus: string) => {
+    updateTaskMutation.mutate({
+      id: taskId,
+      data: { status: newStatus },
+    });
+  };
 
   const isLoading = employeesLoading || tasksLoading;
 
@@ -83,10 +168,104 @@ export default function Onboarding() {
             Track and manage new employee onboarding progress
           </p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Start Onboarding
-        </Button>
+        <Dialog open={isStartDialogOpen} onOpenChange={setIsStartDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Start Onboarding
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Start New Onboarding</DialogTitle>
+              <DialogDescription>
+                Create an onboarding task for an employee
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="employeeId">Employee *</Label>
+                <Select
+                  value={formData.employeeId || ''}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, employeeId: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {employees.map((emp) => (
+                      <SelectItem key={emp.id} value={emp.id}>
+                        {emp.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="title">Task Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  placeholder="Task title"
+                />
+              </div>
+              <div>
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  value={formData.description || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  placeholder="Task description"
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Category *</Label>
+                <Select
+                  value={formData.category || ''}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, category: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="documentation">Documentation</SelectItem>
+                    <SelectItem value="training">Training</SelectItem>
+                    <SelectItem value="equipment">Equipment</SelectItem>
+                    <SelectItem value="introduction">Introduction</SelectItem>
+                    <SelectItem value="compliance">Compliance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="dueDate">Due Date</Label>
+                <Input
+                  id="dueDate"
+                  type="date"
+                  value={formData.dueDate || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dueDate: e.target.value })
+                  }
+                />
+              </div>
+              <Button
+                onClick={handleStartOnboarding}
+                disabled={createTaskMutation.isPending}
+                className="w-full"
+              >
+                {createTaskMutation.isPending ? 'Starting...' : 'Start Onboarding'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Onboarding Cards */}
@@ -135,7 +314,15 @@ export default function Onboarding() {
                       )}
                     >
                       <div className="flex items-center gap-3">
-                        <Checkbox checked={task.status === 'completed'} />
+                        <Checkbox
+                          checked={task.status === 'completed'}
+                          onCheckedChange={(checked) =>
+                            handleUpdateTaskStatus(
+                              task.id,
+                              checked ? 'completed' : 'pending'
+                            )
+                          }
+                        />
                         <div>
                           <p
                             className={cn(

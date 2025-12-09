@@ -1,4 +1,4 @@
--- SmartHire Database Schema
+-- TalentFlow Database Schema
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

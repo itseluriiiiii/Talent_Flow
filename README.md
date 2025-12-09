@@ -1,532 +1,190 @@
-# SmartHire - AI-Powered HR Management System
+# TalentFlow - HR Management System
 
-A modern HR management system with a full-stack implementation featuring React frontend and Node.js backend.
+A modern, responsive HR management platform built with React, TypeScript, and Tailwind CSS.
 
-## 🚀 Quick Start (2 Minutes)
+## Features
 
-### Step 1: Install Dependencies
-```bash
-npm install
-npm run install:server
-```
+- **Dashboard**: Real-time HR metrics and analytics
+- **Candidate Management**: Track and manage job candidates through the hiring pipeline
+- **Interview Scheduling**: Organize and schedule interviews
+- **Employee Management**: Manage employee records and information
+- **Onboarding/Offboarding**: Streamline employee onboarding and offboarding processes
+- **Document Management**: Store and manage HR documents
+- **Analytics**: Comprehensive HR analytics and reporting
+- **Role-Based Access**: Different views for HR managers, department managers, and employees
 
-### Step 2: Start Backend (Terminal 1)
-```bash
-npm run dev:server
-```
+## Tech Stack
 
-### Step 3: Start Frontend (Terminal 2)
-```bash
-npm run dev
-```
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS with custom components
+- **State Management**: React Query for server state
+- **Routing**: React Router v6
+- **UI Components**: Custom component library with Radix UI
+- **Charts**: Recharts for data visualization
+- **Icons**: Lucide React
 
-### Step 4: Login
-- Open: `http://localhost:5173`
-- Email: `sarah.johnson@company.com`
-- Password: `demo123`
+## Responsive Design
 
-✅ **Done!** You're now running SmartHire!
+The application is fully responsive and optimized for all device sizes:
 
----
+### Breakpoints
+- **Mobile**: < 640px (sm)
+- **Tablet**: 640px - 1024px (md)
+- **Desktop**: 1024px - 1280px (lg)
+- **Large Desktop**: > 1280px (xl)
 
-## 📋 Table of Contents
+### Layout Responsiveness
 
-- [Quick Start](#-quick-start-2-minutes)
-- [Project Structure](#project-structure)
-- [Technologies](#technologies)
-- [Setup Instructions](#setup-instructions)
-- [Default Credentials](#default-login-credentials)
-- [API Endpoints](#api-endpoints)
-- [Environment Variables](#environment-variables)
-- [Features](#features)
-- [Commands](#commands)
-- [Troubleshooting](#troubleshooting)
-- [Architecture](#architecture)
-- [Development](#development)
-- [Production](#building-for-production)
+#### Mobile (< 768px)
+- Sidebar is hidden by default and slides in from the left
+- Menu button in header to toggle sidebar
+- Single column layouts for all content
+- Optimized touch targets for mobile interaction
+- Overlay appears when sidebar is open
 
----
+#### Tablet (768px - 1024px)
+- Sidebar always visible
+- 2-column grid layouts for cards and charts
+- Compact spacing for better use of screen real estate
+- All navigation items visible
+
+#### Desktop (1024px+)
+- Sidebar with collapse/expand toggle
+- 3-4 column grid layouts for optimal content distribution
+- Maximum content width of 7xl (80rem) for readability
+- Increased padding and spacing for better visual hierarchy
+- Full-featured header with all controls visible
+
+### Key Responsive Features
+
+1. **Sidebar**
+   - Mobile: Slide-in drawer with overlay
+   - Desktop: Fixed sidebar with collapse option
+   - Smooth animations using CSS transforms
+   - Auto-closes on navigation on mobile
+
+2. **Header**
+   - Mobile: Menu button only
+   - Tablet: Search and role switcher visible
+   - Desktop: Full header with all controls
+   - Responsive padding: `px-4 md:px-6 lg:px-8`
+
+3. **Content Area**
+   - Mobile: Full width with `p-4` padding
+   - Tablet: `p-6` padding
+   - Desktop: `p-8` padding with max-width constraint
+   - Centered content with `max-w-7xl` for large screens
+
+4. **Grid Layouts**
+   - Stats cards: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`
+   - Charts: `grid-cols-1 lg:grid-cols-2` or `lg:grid-cols-3`
+   - Tables: Horizontal scroll on mobile, full width on desktop
+
+5. **Forms and Filters**
+   - Mobile: Stacked vertically
+   - Desktop: Horizontal layout with proper spacing
+   - Responsive select widths: `w-full sm:w-[180px] lg:w-[200px]`
 
 ## Project Structure
 
 ```
-smarthire/
-├── server/                          # Backend API (Express.js)
-│   ├── src/
-│   │   ├── index.ts                # Server entry point
-│   │   ├── types.ts                # TypeScript types
-│   │   ├── data.ts                 # In-memory data store
-│   │   ├── middleware/auth.ts      # JWT authentication
-│   │   └── routes/                 # API endpoints
-│   │       ├── auth.ts
-│   │       ├── candidates.ts
-│   │       ├── interviews.ts
-│   │       ├── employees.ts
-│   │       ├── onboarding.ts
-│   │       ├── offboarding.ts
-│   │       ├── documents.ts
-│   │       └── analytics.ts
-│   ├── .env                        # Environment variables
-│   ├── package.json
-│   └── tsconfig.json
-│
-├── src/                            # Frontend (React)
-│   ├── pages/                      # Page components
-│   ├── components/                 # Reusable components
-│   ├── contexts/AuthContext.tsx    # Auth context
-│   ├── lib/api.ts                  # API client
-│   ├── hooks/                      # Custom hooks
-│   ├── types/                      # TypeScript types
-│   └── data/mockData.ts            # Fallback mock data
-│
-├── .env                            # Frontend config
-├── package.json                    # Frontend dependencies
-└── README.md                       # This file
+src/
+├── components/
+│   ├── dashboard/          # Dashboard components
+│   ├── layout/             # Layout components (AppLayout, Header, Sidebar)
+│   └── ui/                 # Reusable UI components
+├── contexts/               # React contexts (Auth, etc.)
+├── data/                   # Mock data
+├── hooks/                  # Custom React hooks
+├── lib/                    # Utility functions
+├── pages/                  # Page components
+├── styles/                 # Global styles
+└── types/                  # TypeScript type definitions
 ```
 
-## Technologies
-
-### Frontend
-- React 18 with TypeScript
-- Vite for build tooling
-- shadcn-ui components
-- Tailwind CSS
-- React Router for navigation
-- TanStack Query for data fetching
-- Recharts for analytics
-
-### Backend
-- Node.js with Express
-- TypeScript
-- JWT authentication
-- bcryptjs for password hashing
-- CORS enabled
-- In-memory data storage
-
----
-
-## Setup Instructions
+## Getting Started
 
 ### Prerequisites
-- Node.js 16+ installed
-- npm installed
-- Two terminal windows
+- Node.js 16+ or Bun
+- npm or yarn or bun
 
-### 1. Install Frontend Dependencies
+### Installation
 
 ```bash
+# Install dependencies
 npm install
-```
+# or
+bun install
 
-### 2. Install Backend Dependencies
-
-```bash
-npm run install:server
-```
-
-### 3. Start the Backend Server
-
-Open **Terminal 1** and run:
-
-```bash
-npm run dev:server
-```
-
-You should see:
-```
-🚀 Server running on http://localhost:3001
-📊 API endpoints available at http://localhost:3001/api
-📖 API Documentation: http://localhost:3001/
-```
-
-### 4. Start the Frontend
-
-Open **Terminal 2** (keep Terminal 1 running) and run:
-
-```bash
+# Start development server
 npm run dev
+# or
+bun run dev
 ```
 
-You should see:
-```
-VITE ready in XXX ms
-➜  Local:   http://localhost:5173/
-```
+### Environment Variables
 
-### 5. Login to the Application
+Create a `.env` file in the root directory:
 
-1. Open your browser to `http://localhost:5173`
-2. Use the credentials below
-
----
-
-## Default Login Credentials
-
-- **Email**: `sarah.johnson@company.com`
-- **Password**: `demo123`
-
----
-
-## API Endpoints
-
-All endpoints require authentication (except `/api/auth/login`) via Bearer token in the Authorization header.
-
-### Authentication
-- `POST /api/auth/login` - Login with email/password
-- `POST /api/auth/logout` - Logout
-
-### Candidates (5 endpoints)
-- `GET /api/candidates` - List all candidates
-- `GET /api/candidates/:id` - Get candidate details
-- `POST /api/candidates` - Create candidate
-- `PUT /api/candidates/:id` - Update candidate
-- `DELETE /api/candidates/:id` - Delete candidate
-
-### Interviews (5 endpoints)
-- `GET /api/interviews` - List all interviews
-- `GET /api/interviews/:id` - Get interview details
-- `POST /api/interviews` - Schedule interview
-- `PUT /api/interviews/:id` - Update interview
-- `DELETE /api/interviews/:id` - Cancel interview
-
-### Employees (5 endpoints)
-- `GET /api/employees` - List all employees
-- `GET /api/employees/:id` - Get employee details
-- `POST /api/employees` - Add employee
-- `PUT /api/employees/:id` - Update employee
-- `DELETE /api/employees/:id` - Remove employee
-
-### Onboarding (5 endpoints)
-- `GET /api/onboarding` - Get all onboarding tasks
-- `GET /api/onboarding?employeeId=:id` - Get tasks for employee
-- `POST /api/onboarding` - Create task
-- `PUT /api/onboarding/:id` - Update task
-- `DELETE /api/onboarding/:id` - Delete task
-
-### Offboarding (5 endpoints)
-- `GET /api/offboarding` - Get all offboarding tasks
-- `GET /api/offboarding?employeeId=:id` - Get tasks for employee
-- `POST /api/offboarding` - Create task
-- `PUT /api/offboarding/:id` - Update task
-- `DELETE /api/offboarding/:id` - Delete task
-
-### Documents (4 endpoints)
-- `GET /api/documents` - List all documents
-- `GET /api/documents/:id` - Get document details
-- `POST /api/documents` - Upload document
-- `DELETE /api/documents/:id` - Delete document
-
-### Analytics (1 endpoint)
-- `GET /api/analytics` - Get analytics data
-
-### Health Check
-- `GET /api/health` - Server health status
-- `GET /` - API information and endpoints
-
----
-
-## Environment Variables
-
-### Frontend (.env)
-```
+```env
 VITE_API_URL=http://localhost:3001/api
 ```
 
-### Backend (server/.env)
-```
-PORT=3001
-JWT_SECRET=smarthire-secret-key-change-in-production-2024
-NODE_ENV=development
-```
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Responsive Design Implementation
+
+### Mobile-First Approach
+The design follows a mobile-first approach where:
+1. Base styles are optimized for mobile
+2. `sm:`, `md:`, `lg:`, `xl:` prefixes add enhancements for larger screens
+3. Progressive enhancement ensures better experience on larger devices
+
+### Performance Optimizations
+- GPU-accelerated CSS transforms for smooth animations
+- Efficient event listeners with proper cleanup
+- Lazy loading of components
+- Optimized re-renders with React Query
+
+### Browser Support
+- ✅ Chrome/Edge (latest)
+- ✅ Firefox (latest)
+- ✅ Safari (latest)
+- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
+
+## Key Files
+
+### Layout Components
+- `src/components/layout/AppLayout.tsx` - Main layout wrapper with sidebar and header
+- `src/components/layout/Header.tsx` - Responsive header with navigation
+- `src/components/layout/Sidebar.tsx` - Responsive sidebar with navigation menu
+
+### Pages
+- `src/pages/Dashboard.tsx` - Main dashboard with stats and charts
+- `src/pages/HRDashboard.tsx` - HR-specific dashboard with detailed metrics
+- `src/pages/CandidatesPage.tsx` - Candidate management with filtering and sorting
+- `src/pages/Employees.tsx` - Employee management
+- `src/pages/Interviews.tsx` - Interview scheduling
+- `src/pages/Onboarding.tsx` - Onboarding management
+- `src/pages/Offboarding.tsx` - Offboarding management
+- `src/pages/Documents.tsx` - Document management
+- `src/pages/Analytics.tsx` - Analytics and reporting
+
+## Responsive Testing Checklist
+
+- ✅ Mobile (320px - 480px): Sidebar toggle, single column layouts
+- ✅ Tablet (640px - 1024px): 2-column grids, visible sidebar
+- ✅ Desktop (1024px+): 3-4 column grids, collapse toggle
+- ✅ Large Desktop (1280px+): Full-width content with max-width constraint
+- ✅ Landscape orientation: Proper layout adaptation
+- ✅ Touch interactions: Optimized for mobile
+- ✅ Sidebar toggle: Works on all screen sizes
+- ✅ Navigation: Accessible on all devices
+- ✅ Forms: Responsive input fields
+- ✅ Tables: Horizontal scroll on mobile
 
----
-
-## Features
-
-- ✅ JWT-based authentication with 7-day token expiration
-- ✅ Full CRUD operations for all entities
-- ✅ Protected API routes with middleware
-- ✅ Role-based access (HR, Manager, Employee)
-- ✅ Real-time data fetching with React Query
-- ✅ Responsive design with Tailwind CSS
-- ✅ Analytics dashboard with charts
-- ✅ Interview scheduling and tracking
-- ✅ Onboarding/Offboarding workflows
-- ✅ Document management
-- ✅ Employee management
-- ✅ Candidate pipeline tracking
-
----
-
-## Commands
-
-### Development
-```bash
-# Start backend
-npm run dev:server
-
-# Start frontend
-npm run dev
-
-# Install backend dependencies
-npm run install:server
-```
-
-### Building
-```bash
-# Build frontend
-npm run build
-
-# Build backend
-cd server && npm run build
-
-# Preview frontend build
-npm run preview
-```
-
-### Testing
-```bash
-# Test API endpoints
-cd server && node test-api.js
-
-# Test health endpoint
-curl http://localhost:3001/api/health
-
-# Test login
-curl -X POST http://localhost:3001/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"sarah.johnson@company.com","password":"demo123"}'
-```
-
-### Linting
-```bash
-# Lint frontend
-npm run lint
-
-# Build backend (includes type checking)
-cd server && npm run build
-```
-
----
-
-## Troubleshooting
-
-### Port Already in Use
-
-**Error**: `EADDRINUSE: address already in use :::3001`
-
-**Solution (Windows)**:
-```bash
-netstat -ano | findstr :3001
-taskkill /PID <PID> /F
-```
-
-**Solution (macOS/Linux)**:
-```bash
-lsof -i :3001
-kill -9 <PID>
-```
-
-### Cannot GET /
-
-**What it means**: You're accessing the backend root path in your browser.
-
-**Solution**: 
-- ✅ This is normal! The backend is an API server, not a web interface
-- ✅ The frontend is at `http://localhost:5173`
-- ✅ The backend API is at `http://localhost:3001/api`
-
-### Login Failed
-
-**Solutions**:
-1. Verify backend is running: `curl http://localhost:3001/api/health`
-2. Check credentials: `sarah.johnson@company.com` / `demo123`
-3. Clear browser cache: DevTools → Application → Clear Site Data
-4. Check backend console for errors
-
-### Frontend Can't Connect to Backend
-
-**Solutions**:
-1. Verify backend is running on port 3001
-2. Check `.env` has `VITE_API_URL=http://localhost:3001/api`
-3. Restart frontend: Ctrl+C then `npm run dev`
-4. Check browser console (F12) for CORS errors
-
-### Module Not Found
-
-**Solutions**:
-```bash
-npm install
-npm run install:server
-```
-
-### TypeScript Errors
-
-**Solutions**:
-```bash
-cd server
-npm run build
-```
-
----
-
-## Architecture
-
-### Data Flow
-
-```
-User Input (Browser)
-    ↓
-React Component
-    ↓
-React Query Hook
-    ↓
-API Client (src/lib/api.ts)
-    ↓
-HTTP Request with JWT Token
-    ↓
-Express Backend
-    ↓
-JWT Middleware Verification
-    ↓
-Route Handler
-    ↓
-In-Memory Data Store
-    ↓
-Response
-    ↓
-React Query Caching
-    ↓
-Component Re-render
-    ↓
-Display Data
-```
-
-### Authentication Flow
-
-```
-Login Form
-    ↓
-POST /api/auth/login
-    ↓
-Verify Credentials
-    ↓
-Generate JWT Token
-    ↓
-Return Token & User
-    ↓
-Store in localStorage
-    ↓
-Set Authorization Header
-    ↓
-Access Protected Routes
-```
-
----
-
-## Development
-
-The application uses in-memory data storage. All data resets when the server restarts.
-
-### Data Storage
-- Pre-populated with sample data
-- Resets on server restart
-- Ready for database integration
-
-### Adding New Features
-
-1. **Backend**: Add route in `server/src/routes/`
-2. **API Client**: Add method in `src/lib/api.ts`
-3. **Frontend**: Use in React components with `useQuery`
-
----
-
-## Building for Production
-
-### Frontend
-```bash
-npm run build
-```
-
-Output: `dist/` directory
-
-### Backend
-```bash
-cd server
-npm run build
-npm start
-```
-
-Output: `server/dist/` directory
-
-### Deployment
-
-1. **Frontend**: Deploy `dist/` to Vercel, Netlify, or similar
-2. **Backend**: Deploy to Heroku, AWS, DigitalOcean, or similar
-3. **Database**: Integrate PostgreSQL or MongoDB
-4. **Environment**: Update `.env` with production URLs
-
----
-
-## Next Steps (Optional)
-
-### For Development
-- Add database integration (PostgreSQL/MongoDB)
-- Add user registration
-- Add file upload functionality
-- Add email notifications
-- Add input validation
-- Add unit tests
-- Add integration tests
-
-### For Production
-- Deploy backend and frontend
-- Set up CI/CD pipeline
-- Configure production environment variables
-- Set up monitoring and logging
-- Add rate limiting
-- Add API documentation (Swagger)
-
----
-
-## Support & Resources
-
-### Documentation
-- Backend API: `server/README.md`
-- API Testing: Use `server/test-api.js`
-- Architecture: See Architecture section above
-
-### Debugging
-1. Check backend console for errors
-2. Check browser console (F12) for errors
-3. Check Network tab (F12) for API requests
-4. Test API directly with curl commands
-
-### Common Issues
-- **Port in use**: See Troubleshooting section
-- **Login fails**: Verify backend is running
-- **Can't connect**: Check `.env` configuration
-- **Data not loading**: Check browser console for errors
-
----
-
-## Project Info
-
-**Status**: ✅ Complete and Ready to Use
-
-**Technologies**: React 18, TypeScript, Vite, Express.js, Node.js, JWT, bcryptjs
-
-**Features**: 40+ API endpoints, Full CRUD operations, Authentication, Analytics, Responsive design
-
-**URL**: https://lovable.dev/projects/1ec9b04a-0375-4b95-b913-46e7bc3a4058
-
----
-
-## License
-
-This project is part of the SmartHire HR Management System.
-
----
-
-**Last Updated**: December 5, 2025
-**Status**: ✅ Production Ready

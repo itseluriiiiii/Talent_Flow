@@ -1,9 +1,27 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 import {
   Calendar,
   Video,
@@ -43,11 +61,51 @@ const statusColors: Record<string, string> = {
 
 export default function Interviews() {
   const [tab, setTab] = useState('upcoming');
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: interviews = [], isLoading, error } = useQuery({
     queryKey: ['interviews'],
     queryFn: () => api.getInterviews(),
   });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => api.createInterview(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['interviews'] });
+      setIsScheduleDialogOpen(false);
+      setFormData({});
+      toast({
+        title: 'Success',
+        description: 'Interview scheduled successfully',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to schedule interview',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleScheduleInterview = () => {
+    if (!formData.candidateName || !formData.scheduledAt || !formData.type) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
+      });
+      return;
+    }
+    createMutation.mutate({
+      ...formData,
+      duration: parseInt(formData.duration) || 60,
+      interviewers: formData.interviewers ? formData.interviewers.split(',').map((i: string) => i.trim()) : [],
+    });
+  };
 
   const scheduledInterviews = interviews.filter((i) => i.status === 'scheduled');
   const completedInterviews = interviews.filter((i) => i.status === 'completed');
@@ -62,10 +120,106 @@ export default function Interviews() {
             Schedule and manage candidate interviews
           </p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Schedule Interview
-        </Button>
+        <Dialog open={isScheduleDialogOpen} onOpenChange={setIsScheduleDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Schedule Interview
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Schedule New Interview</DialogTitle>
+              <DialogDescription>
+                Fill in the interview details below
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="candidateName">Candidate Name *</Label>
+                <Input
+                  id="candidateName"
+                  value={formData.candidateName || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, candidateName: e.target.value })
+                  }
+                  placeholder="Candidate name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="position">Position *</Label>
+                <Input
+                  id="position"
+                  value={formData.position || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, position: e.target.value })
+                  }
+                  placeholder="Job position"
+                />
+              </div>
+              <div>
+                <Label htmlFor="scheduledAt">Date & Time *</Label>
+                <Input
+                  id="scheduledAt"
+                  type="datetime-local"
+                  value={formData.scheduledAt || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, scheduledAt: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  value={formData.duration || '60'}
+                  onChange={(e) =>
+                    setFormData({ ...formData, duration: e.target.value })
+                  }
+                  placeholder="60"
+                />
+              </div>
+              <div>
+                <Label htmlFor="type">Interview Type *</Label>
+                <Select
+                  value={formData.type || ''}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, type: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="video">Video Call</SelectItem>
+                    <SelectItem value="phone">Phone Call</SelectItem>
+                    <SelectItem value="onsite">On-site</SelectItem>
+                    <SelectItem value="ai">AI Interview</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="interviewers">Interviewers (comma-separated)</Label>
+                <Input
+                  id="interviewers"
+                  value={formData.interviewers || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, interviewers: e.target.value })
+                  }
+                  placeholder="John Smith, Jane Doe"
+                />
+              </div>
+              <Button
+                onClick={handleScheduleInterview}
+                disabled={createMutation.isPending}
+                className="w-full"
+              >
+                {createMutation.isPending ? 'Scheduling...' : 'Schedule Interview'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Tabs */}
