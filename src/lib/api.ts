@@ -129,6 +129,13 @@ class ApiClient {
     return this.request(`/interviews/${id}`, { method: 'DELETE' });
   }
 
+  async addInterviewFeedback(id: string, feedback: any) {
+    return this.request(`/interviews/${id}/feedback`, {
+      method: 'POST',
+      body: JSON.stringify(feedback),
+    });
+  }
+
   // Employees
   async getEmployees() {
     return this.request('/employees');
